@@ -10,14 +10,12 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 
 
 public class GUI extends Application {
-
-    //what you need for a scene, allows makeItPretty to be called when not all layouts have changed:
-
     @Override
     public void start(Stage s) throws Exception {
         s.setScene(mainScene(s));
@@ -26,20 +24,38 @@ public class GUI extends Application {
 
     //creates mainScene
     public Scene mainScene (Stage s){
-        Button bb = new Button("go to specialcheckbox");
+        Button bb = new Button("Family ID");
         bb.setOnAction(e -> s.setScene(charTypeCombibox(s)));
 
-        Button ee = new Button("go to combobox1");
+        Button ee = new Button("FactSheet");
         ee.setOnAction(e -> s.setScene(combobox1(s)));
+
+        Button gg = new Button("Rate a Memory Palace");
+        Game g = new Game();
+        gg.setOnAction(e -> s.setScene(g.rateAMemoryPalace()));
+
+        Button ll = new Button("Memory Palace example");
+        ll.setOnAction(e -> {
+            try {
+                s.setScene(g.images());
+            } catch (FileNotFoundException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+        Button vv = new Button("Video of a Memory Palace");
+        vv.setOnAction(event -> s.setScene(g.videoPlayer()));
 
         BorderPane bp = new BorderPane();
 
         VBox mainLayout = new VBox();
-        mainLayout.getChildren().addAll(bb,ee);
+        mainLayout.getChildren().addAll(bb,ee,gg,ll,vv);
 
         bp.setCenter(mainLayout);
 
         bp.setBottom(back2main(s));
+
+        s.setTitle("Main Page");
 
         Scene mainScene = new Scene(bp, 500, 500);
 
@@ -52,6 +68,21 @@ public class GUI extends Application {
         b.setOnAction(e -> s.setScene(mainScene(s)));
         return b;
     }
+
+    //creates return button
+    public Button back2mainStageless(){
+        Stage s = new Stage();
+        Button b = new Button("back to main");
+        b.setOnAction(e -> {
+            try {
+                start(s);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        return b;
+    }
+
 
     //creates checkbox scene
     public Scene checkbox (Stage s){
@@ -122,7 +153,7 @@ public class GUI extends Application {
         tile_pane.setPrefRows(20);
 
         //Setting background colour
-        tile_pane.setStyle("-fx-background-color: DAE6F3;");
+        //tile_pane.setStyle("-fx-background-color: DAE6F3;");
 
         // Create a scene
         Scene scene = new Scene(tile_pane, 500, 500);
@@ -154,7 +185,7 @@ public class GUI extends Application {
         int end = a.charTypeListPosition.get(i + 1) - 2;
 
         //array for all the checkboxes to be displayed
-        ArrayList<CheckBox> cbArray = new ArrayList<>();
+        ArrayList<CheckBox> cbArray = new ArrayList<CheckBox>();
         //deletes prior characteristic type checkboxes
         v.getChildren().clear();
 
@@ -210,7 +241,7 @@ public class GUI extends Application {
         sp.setContent(v);
         bp.setCenter(sp);
 
-        bp.setStyle("-fx-background-color: DAE6F3;");
+        //bp.setStyle("-fx-background-color: DAE6F3;");
 
         // Create a scene
         scene.setRoot(bp);
@@ -228,7 +259,7 @@ public class GUI extends Application {
         //gets data from excel
         getCells a = new getCells();
         a.charTypeListCreater();
-        ArrayList charType; //Arraylist to be made into a combobox
+        ArrayList<String> charType = new ArrayList<String>(); //Arraylist to be made into a combobox
         charType = a.charTypeList;
 
         //needs not to be new when different checkboxes are made so it was made here,
@@ -263,7 +294,7 @@ public class GUI extends Application {
         v.getChildren().add(combo_box);
         bp.setLeft(v);
 
-        bp.setStyle("-fx-background-color: DAE6F3;");
+        //bp.setStyle("-fx-background-color: DAE6F3;");
 
         // Create a scene
         scene.setRoot(bp);

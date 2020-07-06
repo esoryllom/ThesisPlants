@@ -1,6 +1,6 @@
 import org.apache.poi.ss.usermodel.*;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.ArrayList;
 
 class getCells {
@@ -24,7 +24,8 @@ class getCells {
     //creates an array with all the plant families in it
     public void famListCreater() {
 
-        try (Workbook wb = WorkbookFactory.create(new File("C://Users//Molly//Documents//Thesis//newDupe.xlsx"))) {
+        try (Workbook wb = WorkbookFactory.create(new File
+                ("src/dupex.xlsx"))) {
             Sheet sheet = wb.getSheetAt(0);
 
             famList = new ArrayList<>();
@@ -47,7 +48,13 @@ class getCells {
 
     //creates an array with all the plant characters in it
     public void charTypeListCreater() {
-        try (Workbook wb = WorkbookFactory.create(new File("C://Users//Molly//Documents//Thesis//newDupe.xlsx"))) {
+        try (
+//                BufferedReader br = new BufferedReader(new InputStreamReader(
+//                        ClassLoader.getSystemClassLoader()
+//                                .getResourceAsStream("resource/test.txt")));
+               // InputStream in = getClass().getResourceAsStream("src/dupex.xlsx");
+
+                Workbook wb = WorkbookFactory.create(new File("src/dupex.xlsx"))) {
             Sheet sheet = wb.getSheetAt(0);
 
             charList = new ArrayList<>();
@@ -111,7 +118,7 @@ class getCells {
     public ArrayList<String> charListCreater() {
         ArrayList<String> cLC = new ArrayList<>();
 
-        try (Workbook wb = WorkbookFactory.create(new File("C://Users//Molly//Documents//Thesis//newDupe.xlsx"))) {
+        try (Workbook wb = WorkbookFactory.create(new File("src/dupex.xlsx"))) {
             Sheet sheet = wb.getSheetAt(0);
             Row row = sheet.getRow(1);
 
@@ -136,10 +143,12 @@ class getCells {
 //        System.out.println(fam);
         int rowIndex = famList.indexOf(fam) + 2;
 
-        try (Workbook wb = WorkbookFactory.create(new File("C://Users//Molly//Documents//Thesis//newDupe.xlsx"))) {
+        try (Workbook wb = WorkbookFactory.create(new File
+                ("src/dupex.xlsx"))) {
             Sheet sheet = wb.getSheetAt(0);
 
             plantFamInfo = new ArrayList<>();
+            plantFamInfo.add("Facts about " + fam);
             Row characteristics = sheet.getRow(1);
             Row row = sheet.getRow(rowIndex);
 
@@ -154,7 +163,13 @@ class getCells {
                 String value = df.formatCellValue(cell);
 
                 if (!value.isEmpty()) {
-                    plantFamInfo.add(charValue + " : " + value);
+                    if(value.equals("x")){
+                        plantFamInfo.add("\n" + charValue + " occurs");
+                    }
+                    else{
+                        plantFamInfo.add("\n" + charValue + " is " + value);
+                    }
+
                 }
 
 
@@ -166,10 +181,51 @@ class getCells {
 
     }
 
+    //Retrieves info about a plantfamily
+    public ArrayList<String> famInfoGame(String fam) {
+//        System.out.println(fam);
+        ArrayList<String> plantFamInfoG = new ArrayList<>();
+        int rowIndex = famList.indexOf(fam) + 2;
+
+        try (Workbook wb = WorkbookFactory.create(new File
+                ("src/dupex.xlsx"))) {
+            Sheet sheet = wb.getSheetAt(0);
+
+
+            //plantFamInfo.add("Facts about " + fam);
+            Row characteristics = sheet.getRow(1);
+            Row row = sheet.getRow(rowIndex);
+
+            for (int j = 2; j < row.getLastCellNum(); j++) {
+                // characteristics
+                Cell chars = characteristics.getCell(j);
+                DataFormatter dataF = new DataFormatter();
+                String charValue = dataF.formatCellValue(chars);
+
+                Cell cell = row.getCell(j);
+                DataFormatter df = new DataFormatter();
+                String value = df.formatCellValue(cell);
+
+                if (!value.isEmpty()) {
+                    if(value.equals("x")){
+                        plantFamInfoG.add(charValue);
+                    }
+                    else{
+                        plantFamInfoG.add(charValue + " is " + value);
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return plantFamInfoG;
+    }
+
     public ArrayList getCharColumn(int column) {
         ArrayList<String> data = new ArrayList<>();
 
-        try (Workbook wb = WorkbookFactory.create(new File("C://Users//Molly//Documents//Thesis//newDupe.xlsx"))) {
+        try (Workbook wb = WorkbookFactory.create(new File("src/dupex.xlsx"))) {
             Sheet sheet = wb.getSheetAt(0);
 
             for (int i = 2; i <= sheet.getLastRowNum(); i++) {
@@ -177,7 +233,7 @@ class getCells {
 
                 int j = column;
                     Cell cell = row.getCell(j);
-                    if(cell.getCellType() == CellType.BLANK){
+                    if(cell == null){
                         data.add("nope");
                     }
                     else {
